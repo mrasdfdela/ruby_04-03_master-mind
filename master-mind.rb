@@ -8,15 +8,60 @@ class Mastermind
   # start game
     # initialize maker - select color pattern
     # create color counter
-    def initialize(board_size, num_colors=6)
-      @game_over = false
-      @board = Board.new(board_size)
-      @code = Code.new(num_colors)
-    end
+  def initialize()
+    @game_over = false
+    
+    @@colors = ["White", "Black", "Red", "Green", "Orange", "Yellow"]
+    @num_colors = get_num_colors
+    @code = Code.new(num_colors, @@colors)
 
-    def play
-      @board.print_board(@code.secret)
+    board_size = get_board_size
+    @board = Board.new(board_size)
+  end
+
+  def get_num_colors
+    num_colors = [4,5,6]
+    msg = "How many colors would you like to play with? Select a number between 4 & 6:"
+    valid_entry(msg,num_colors)
+  end
+
+  def get_board_size
+    size_options = [8,10,12]
+    msg = "What size board would you like to play with? Select 8, 10, or 12:"
+    valid_entry(msg, size_options)
+  end
+  
+  def valid_entry(msg,arr)
+    valid_size = false
+    invalid_msg = ""
+
+    until valid_size == true
+      puts invalid_msg + msg
+      num = gets.chomp.to_i
+      if num.is_a?(Numeric) && arr.include?(num)
+        valid_size = true
+        return num
+      end
+      invalid_msg = "Invalid entry. "
     end
+  end
+
+  def self.colors
+    @@colors
+  end
+
+  def play_turn
+
+  end
+
+  def play
+    @board.print_board(@code.secret)
+
+    @game_over = false
+    until @game_over == true
+      byebug
+    end
+  end
 end
 
 class Hole
@@ -29,10 +74,10 @@ end
 class Code
   attr_reader :secret, :colors
   
-  def initialize(num)
-    colors = ["White", "Black", "Red", "Green", "Orange", "Yellow"]
-    until colors.length == num
-      colors.pop
+  def initialize(num,colors)
+    
+    until Mastermind.colors.length == num
+      Mastermind.colors.pop
     end
 
     @secret = code(colors)
@@ -87,5 +132,5 @@ class Board
   end
 end
 
-new_game = Mastermind.new(12, 4)
+new_game = Mastermind.new()
 new_game.play
