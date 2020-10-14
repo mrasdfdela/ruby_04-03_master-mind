@@ -1,30 +1,72 @@
 require 'byebug'
 require './master-mind-inputs'
+require './master-mind-guesses'
 include Inputs
+include Guesses
 
 class Mastermind
   # Mastermind game
+  attr_accessor :colors, :guesses
   attr_reader :game_over, :num_colors, :board, :code
 
   def initialize()
     @game_over = false
 
-    @colors = %w[White Black Red Green Orange Yellow]
+    @@colors = %w[White Black Red Green Orange Yellow]
     @num_colors = select_num_colors
-    @code = Code.new(num_colors, @colors)
+    @code = Code.new(num_colors, @@colors)
 
     board_size = select_board_size
     @board = Board.new(board_size)
   end
 
-  def play_turn; end
+  def self.colors
+    @@colors
+  end
+
+  def self.pop_color
+    @@colors.pop
+  end
+
+  ## Review this
+  def update_row
+    game_board = @board.board
+    game_board.each do |row|
+      if row[0].color == nil
+        import_guess(row, @guesses)
+        break
+      end
+    end  
+  end
+
+  def eval_guess(guesses)
+    correct_guess = true
+
+    @code.secret.each_with_index do |el, idx|
+      correct_guess = false if el != guesses[idx][0]
+    end
+  end
 
   def play
     @board.print_board(@code.secret)
 
     @game_over = false
     until @game_over == true
+      # player guesses 4 colors in sequence
+      @guesses = get_valid_guess(@@colors)
       byebug
+      update_row
+      eval_guess(@guesses)
+      @board.print_board(code.secret)
+      # evaluate whether all guesses are valid
+        # re-guess until all guesses are valid
+      # count the number of correct colors
+        # create an associative array color_count
+        # cross-reference guess array w/ color_count
+        # create an associative array for correct_color_count & correct_color_position_count
+      # count the number of correct colors & positions; 
+        # cross-referernce arrays;  
+        # for each correct count & position, +1 count and -1 correct color count
     end
   end
 end
@@ -43,7 +85,7 @@ class Code
 
   def initialize(num,colors)
     until Mastermind.colors.length == num
-      Mastermind.colors.pop
+      Mastermind.pop_color
     end
 
     @secret = code(colors)

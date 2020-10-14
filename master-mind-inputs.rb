@@ -17,7 +17,10 @@ module Inputs
 
     until valid_size == true
       puts invalid_msg + msg
-      num = gets.chomp.to_i
+      # Code between these hashes are for testing purposes
+      num = arr.max
+      # num = gets.chomp.to_i
+      
       if num.is_a?(Numeric) && arr.include?(num)
         valid_size = true
         return num
