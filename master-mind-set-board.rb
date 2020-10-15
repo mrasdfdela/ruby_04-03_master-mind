@@ -1,4 +1,4 @@
-module Inputs
+module SetBoard
   def select_num_colors
     num_colors = [4, 5, 6]
     msg = 'How many colors would you like to play with? Select a number between 4 & 6:'

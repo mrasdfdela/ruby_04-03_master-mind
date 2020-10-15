@@ -39,4 +39,13 @@ module Guesses
       el.color = guesses[idx]
     end
   end
+
+  def update_row(board)
+    board.each do |row|
+      if row[0].color == nil
+        import_guess(row, @guesses)
+        break
+      end
+    end
+  end
 end
