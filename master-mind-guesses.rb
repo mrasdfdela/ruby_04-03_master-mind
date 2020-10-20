@@ -6,7 +6,11 @@ module Guesses
 
     until guess_valid(guesses, colors)
       puts err_msg + msg
-      guesses = guess_colors
+      if @player.role == 'breaker'
+        guesses = guess_colors
+      elsif @player.role == 'maker'
+        guesses = ai_guess_colors(colors)
+      end
       err_msg = 'Invalid input. '
     end
 
@@ -48,4 +52,42 @@ module Guesses
       end
     end
   end
+
+  def ai_guess_colors(colors)
+    puts "hello world!"
+    # generate all possibilities
+    set = full_set(colors)
+    # evaluate starter guess
+    starter = [colors[0], colors[0], colors[1],colors[1]]
+
+      # eliminate guesses based on results
+    # iterate through remaining guesses
+  end
+
+  def full_set(c)
+    all = []
+    i = c.length
+    (0...i).each do |j|
+      (0...i).each do |k|
+        (0...i).each do |l|
+          (0...i).each do |m|
+            possibility = c[j], c[k], c[l], c[m]
+            all.push(possibility, element_count(possibility))
+          end
+        end
+      end
+    end
+    
+    byebug
+  end
+
+  def element_count(array)
+    count = Hash.new
+    array.each do |el|
+      count[el] ? count[el] += 1 : count[el] = 1
+    end
+    count
+  end
+
+  def eval_guess
 end

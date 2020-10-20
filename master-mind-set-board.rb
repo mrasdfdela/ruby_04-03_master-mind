@@ -28,4 +28,44 @@ module SetBoard
       invalid_msg = 'Invalid entry. '
     end
   end
+
+  class Board
+    # Where the board, secret code, and guesses are kept
+    attr_accessor :board, :guess_results
+    def initialize(guesses)
+      @board = Array.new(guesses) {
+        Array.new(4) {
+          Hole.new()
+        }
+      }
+      @guess_results = []
+    end
+  
+    def print_board(code)
+      first_row = "C: "
+      code.each {|el| first_row += " #{el}"}
+      puts first_row
+  
+      board.each_with_index do |row, idx|
+        i = (idx + 1).to_s
+        i = " #{i}" if i.length < 2
+        row_print = "#{i} "
+  
+        row.each do |hole|
+          hole.color == nil ? row_print += " X" : row_print += " #{hole.color[0]}"
+        end
+  
+        if guess_results[idx]
+          r = guess_results[idx]
+          row_print += " correct position => #{r['position_count']} color only => #{r['color_count']} "
+        end
+  
+        puts row_print
+      end
+    end
+  
+    def new_guess_results(hash)
+      @guess_results.push(hash)
+    end
+  end
 end
