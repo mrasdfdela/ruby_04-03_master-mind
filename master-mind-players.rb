@@ -16,7 +16,9 @@ module Players
       until role_selected == true
         puts error_msg + msg
 
-        choice = gets.chomp.downcase
+        # for testing 'maker' option
+          choice = 'maker'
+        # choice = gets.chomp.downcase
         role_selected = true if choices.include?(choice)
         error_msg = 'Invalid selection. '
       end
@@ -32,7 +34,6 @@ module Players
       @set = full_set(colors)
       # generate all possibilities
       @starter = [colors[0], colors[0], colors[1],colors[1]]
-      byebug
     end
 
     def full_set(c)
@@ -52,25 +53,41 @@ module Players
     end
 
     def ai_guess_colors
-      puts guess
       if @set.length == 1296
-        remove_el_from_set(@starter)
+        remove_from_set_guess(@starter)
         return @starter
       else 
         # eliminate guesses based on results
         guess = @set.sample.combo
-        remove_el_from_set(guess)
+        remove_from_set_guess(guess)
+        remove_from_set_count(guess)
+        return guess
       end
     end
 
-    def remove_el_from_set(guess)
+    def remove_from_set_guess(guess)
       @set.each_with_index do |el, idx|
-        @set.slice!(idx) if el.combo == @starter
+        @set.slice!(idx) if el.combo == guess
       end
     end
 
-    def eval_colors(colors)
+    def remove_from_set_count(guess)
+      guess_count = color_count(guess)
+      guess_count.each do |k, v|
+        @set.each_with_index do |el, idx|
 
+        end
+      end
+    end
+
+    def color_count(guess)
+      byebug
+      guess_count = Hash.new
+      guess.each do |el|
+        el = el[0]
+        guess_count[el] ? guess_count[el] += 1 : guess_count[el] = 1
+      end
+      guess_count
     end
   end
 

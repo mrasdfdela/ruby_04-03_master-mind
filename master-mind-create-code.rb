@@ -38,7 +38,9 @@ module CreateCode
       valid_code = false
       until valid_code == true
         puts err_msg + msg
-        input = gets.chomp.split(',')
+        # for testing
+          input = 'White, Black, Red, Green'.chomp.split(',')
+        # input = gets.chomp.split(',')
         input.map! { |el| el.strip.capitalize }
 
         valid_code = code_eval_length(input) && code_eval_colors(input)

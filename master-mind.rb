@@ -32,15 +32,13 @@ class Mastermind
     @board = Board.new
     @num_colors = @board.num_colors
     @code = Code.new(num_colors, @@colors, @player.role)
-    
-    @guess_count = 0
   end
 
   def play
     code = @code.secret
     @game_over = false
 
-    until @game_over == true || @board.guess_count == 12
+    until @game_over == true || @board.guess_count > 12
       @board.guess_count += 1
       # print board, get (valid) guess from user, and update board
       @board.print_board(code)
@@ -57,6 +55,9 @@ class Mastermind
       correct_color_and_position = eval_colors_and_pos(@guesses, code)
       @board.new_guess_results(correct_color_and_position)
     end
+
+    puts "You have run out of guesses! Game over!" if @board.guess_count == 12
+    byebug
   end
 end
 
