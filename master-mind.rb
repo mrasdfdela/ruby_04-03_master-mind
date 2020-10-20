@@ -12,7 +12,7 @@ class Mastermind
   include Guesses
   include EvalGuesses
   # Mastermind game
-  attr_accessor :colors, :guesses
+  attr_accessor :colors, :player_AI, :guesses
   attr_reader :game_over, :num_colors, :board, :code, :player
 
   def self.colors
@@ -28,18 +28,20 @@ class Mastermind
     @@colors = %w[White Black Red Green Orange Yellow]
     
     @player = Player.new
-    @num_colors = select_num_colors
+    @player_AI = PlayerAI.new(@@colors) if @player.role == 'maker'
+    @board = Board.new
+    @num_colors = @board.num_colors
     @code = Code.new(num_colors, @@colors, @player.role)
     
-    board_size = select_board_size
-    @board = Board.new(board_size)
+    @guess_count = 0
   end
 
   def play
     code = @code.secret
     @game_over = false
 
-    until @game_over == true
+    until @game_over == true || @board.guess_count == 12
+      @board.guess_count += 1
       # print board, get (valid) guess from user, and update board
       @board.print_board(code)
       @guesses = get_valid_guess(@@colors)
