@@ -1,54 +1,39 @@
 require 'byebug'
 require './master-mind-players'
-require './master-mind-set-board'
-require './master-mind-guesses'
-require './master-mind-eval-guesses'
-require './master-mind-create-code'
+require './master-mind-board'
+require './master-mind-board-code'
 
 class Mastermind
-  include Players
-  include CreateCode
-  include SetBoard
-  include Guesses
-  include EvalGuesses
   # Mastermind game
   attr_accessor :colors, :player_AI, :guesses
-  attr_reader :game_over, :num_colors, :board, :code, :player
+  attr_reader :player, :board
 
-  def self.colors
-    @@colors
-  end
-
-  def self.pop_color
-    @@colors.pop
-  end
-
+  
   def initialize()
-    @game_over = false
-    @@colors = %w[White Black Red Green Orange Yellow]
-    
     @player = Player.new
-    @player_AI = PlayerAI.new(@@colors) if @player.role == 'maker'
-    @board = Board.new
-    @num_colors = @board.num_colors
-    @code = Code.new(num_colors, @@colors, @player.role)
+    @board = Board.new(@player.role)
+    @player_AI = PlayerAI.new(@player.role, @board.color_options)
   end
 
   def play
-    code = @code.secret
-    @game_over = false
+    code = @board.code.secret
+    game_over = false
 
-    until @game_over == true || @board.guess_count > 12
+    until game_over == true || @board.guess_count > 12
       @board.guess_count += 1
-      # print board, get (valid) guess from user, and update board
-      @board.print_board(code)
-      @guesses = get_valid_guess(@@colors)
+      @board.print_board(@board.code.secret) # this is an optional parameter; remove when done
+      if @player.role == 'breaker'
+        guess = @player.get_valid_guess(@board.color_options)
+      else
+        guess = @player_AI.guess
+      end
+      byebug
       update_row(@board.board)
 
       # evaluates if the current guess is correct 
       if eval_all_correct(@guesses, code)
         puts "Correct! You have won!"
-        @game_over = true 
+        game_over = true 
       end
 
       # evaluates and returns the number of correct guesses (color & position)
@@ -58,14 +43,6 @@ class Mastermind
 
     puts "You have run out of guesses! Game over!" if @board.guess_count == 12
     byebug
-  end
-end
-
-class Hole
-  # Holes within the board
-  attr_accessor :color
-  def initialize(color=nil)
-    @color = color
   end
 end
 
