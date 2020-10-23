@@ -11,7 +11,7 @@ class Mastermind
   def initialize()
     @player = Player.new
     @board = Board.new(@player.role)
-    @player_AI = PlayerAI.new(@player.role, @board.color_options)
+    @player_AI = PlayerAI.new(@player.role, @board)
   end
 
   def play
@@ -19,7 +19,7 @@ class Mastermind
     game_over = false
 
     until game_over == true || @board.guess_count > 12
-      @board.print_board(@board.code.secret) # this is an optional parameter; remove when done
+      @board.print(@board.code.secret) # this is an optional parameter; remove when done
 
       if @player.role == 'breaker'
         guess = @player.get_valid_guess(@board.color_options)

@@ -42,7 +42,6 @@ class Board
     board.each do |row|
       if row.holes[0].nil?
         row.holes = guess
-        byebug
         row.correct_positions = correct_color_and_pos(guess, @code.secret)
         row.correct_colors = correct_color_count(guess, @code.secret) - row.correct_positions
         break

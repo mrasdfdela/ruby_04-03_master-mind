@@ -21,7 +21,7 @@ class Player
       puts error_msg + msg
 
       # for testing 'maker' option
-        choice = 'breaker'
+        choice = 'maker'
       # choice = gets.chomp.downcase
       role_selected = true if choices.include?(choice)
       error_msg = 'Invalid selection. '
@@ -38,15 +38,16 @@ end
 
 class PlayerAI
   # for when player is the code maker
-  include PlayerAIguessing
-  attr_accessor :role, :color_options, :set, :starter, :initial_guess_idx, :color_count
-  def initialize(player_role, color_options)
+  include GuessingAlgorithm
+  attr_accessor :role, :board, :color_options, :set, :starter, :initial_guess_idx, :color_count, :color_count_idx
+  def initialize(player_role, board)
     @role = set_role(player_role)
-    @color_options = color_options
+    @board = board
+    @color_options = @board.color_options
     if @role == 'breaker'
       @set = full_set(@color_options) # generate set of potential codes
       @color_count_idx = 0 # indexes which initial color to evaluate
-      @color_count = 0 # tracks the number of colors that have been ID'd
+      @color_count = Hash.new # tracks the number of colors that have been ID'd
     end
   end
 
