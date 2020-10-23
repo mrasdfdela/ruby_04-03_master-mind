@@ -1,8 +1,7 @@
 module SelectColors
+  # module for players color selection
   def get_valid_colors(msg, color_options)
-    color_options.each do |el|
-      msg += " #{el}"
-    end
+    color_options.each { |el| msg += " #{el}" }
 
     err_msg = ''
     valid_code = false
@@ -29,6 +28,26 @@ module SelectColors
   def validate_input_options(input, color_options)
     input.all? do |el|
       color_options.include?(el)
+    end
+  end
+end
+
+module ValidateEntry
+  # Generic method for validating user input from a pre-set array
+  def validate_entry(msg,arr)
+    valid_size = false
+    invalid_msg = ''
+
+    until valid_size == true
+      puts invalid_msg + msg
+      num = arr.max # pre-selected for testing purposes
+      # num = gets.chomp.to_i
+
+      if num.is_a?(Numeric) && arr.include?(num)
+        valid_size = true
+        return num
+      end
+      invalid_msg = 'Invalid entry. '
     end
   end
 end

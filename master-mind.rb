@@ -8,7 +8,6 @@ class Mastermind
   attr_accessor :colors, :player_AI, :guesses
   attr_reader :player, :board
 
-  
   def initialize()
     @player = Player.new
     @board = Board.new(@player.role)
@@ -20,29 +19,19 @@ class Mastermind
     game_over = false
 
     until game_over == true || @board.guess_count > 12
-      @board.guess_count += 1
       @board.print_board(@board.code.secret) # this is an optional parameter; remove when done
+
       if @player.role == 'breaker'
         guess = @player.get_valid_guess(@board.color_options)
       else
         guess = @player_AI.guess
       end
-      byebug
-      update_row(@board.board)
 
-      # evaluates if the current guess is correct 
-      if eval_all_correct(@guesses, code)
-        puts "Correct! You have won!"
-        game_over = true 
-      end
-
-      # evaluates and returns the number of correct guesses (color & position)
-      correct_color_and_position = eval_colors_and_pos(@guesses, code)
-      @board.new_guess_results(correct_color_and_position)
+      @board.update_row(guess)
+      game_over = @board.eval_guess(guess)
+      @board.guess_count += 1
     end
-
-    puts "You have run out of guesses! Game over!" if @board.guess_count == 12
-    byebug
+    return
   end
 end
 

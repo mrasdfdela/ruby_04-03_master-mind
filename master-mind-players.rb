@@ -1,4 +1,5 @@
 require './master-mind-modules'
+require './master-mind-module-AI'
 
 class Player
   # for selecting player to be a code maker or breaker
@@ -36,22 +37,21 @@ class Player
 end
 
 class PlayerAI
+  # for when player is the code maker
+  include PlayerAIguessing
   attr_accessor :role, :color_options, :set, :starter, :initial_guess_idx, :color_count
-  
   def initialize(player_role, color_options)
     @role = set_role(player_role)
     @color_options = color_options
-    setup_ai if @role == 'breaker'
+    if @role == 'breaker'
+      @set = full_set(@color_options) # generate set of potential codes
+      @color_count_idx = 0 # indexes which initial color to evaluate
+      @color_count = 0 # tracks the number of colors that have been ID'd
+    end
   end
 
   def set_role(player_role)
     player_role == 'maker' ? 'breaker' : 'maker'
-  end
-
-  def setup_ai
-    @set = full_set(@color_options) # generate set of potential codes
-    @color_count_idx = 0 # indexes which initial color to evaluate
-    @color_count = 0 # tracks the number of colors that have been ID'd
   end
 
   def full_set(c)
@@ -68,31 +68,6 @@ class PlayerAI
       end
     end
     all
-  end
-
-  def current_color
-    @colors[@color_count_idx]
-  end
-
-  def ai_guess_colors
-    i = @colors[@color_count_idx]
-    if @color_count <= 4
-      guess = [ i, i, i, i ]
-      remove_from_set_guess(guess)
-      
-      @color_count_idx += 1
-      guess
-    else
-      guess = @set.sample.combo
-      remove_from_set_guess(guess)
-      remove_from_set_count(guess)
-    end
-  end
-
-  def remove_from_set_guess(guess)
-    @set.each_with_index do |el, idx|
-      @set.slice!(idx) if el.combo == guess
-    end
   end
 end
 
@@ -111,36 +86,3 @@ class SetElement
     count
   end
 end
-
-
-# def ai_guess_colors
-#   if @set.length == 1296
-#     remove_from_set_guess(@starter)
-#     return @starter
-#   else 
-#     # eliminate guesses based on results
-#     guess = @set.sample.combo
-#     remove_from_set_guess(guess)
-#     remove_from_set_count(guess)
-#     return guess
-#   end
-# end
-
-# def remove_from_set_guess(guess)
-#   @set.each_with_index do |el, idx|
-#     @set.slice!(idx) if el.combo == guess
-#   end
-# end
-
-# def remove_from_set_count(guess)
-#   color_count = color_count(guess)
-#   color_count.each do |k, v|
-#     @set.each_with_index do |el, idx|
-#       if el.count[k] == nil
-#         @set.slice!(idx)
-#       elsif el.count[k] < v
-#         @set.slice!(idx)
-#       end
-#     end
-#   end
-# end

@@ -11,11 +11,14 @@ module BoardPrint
         row_print += add_text(hole, 'X')
       end
 
-      row_print += add_text(row.correct_positions, '')
-      row_print += add_text(row.correct_colors, '')
+      if row.correct_positions
+        row_print += " | Positions => #{row.correct_positions}"
+        row_print += " | Colors => #{row.correct_colors}"
+      end
 
       puts row_print
     end
+    return
   end
 
   def print_secret_code(code)
@@ -27,6 +30,6 @@ module BoardPrint
   end
 
   def add_text(el, default)
-    el == nil ? str = " #{default}" : str = " #{el}"
+    el == nil ? str = " #{default}" : str = " #{el[0]}"
   end
 end

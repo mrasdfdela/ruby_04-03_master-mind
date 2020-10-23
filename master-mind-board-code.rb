@@ -21,7 +21,7 @@ class Code
 
   def generate_code_auto
     arr = Array.new
-    4.times { |i| arr.push(color_options.sample[0]) }
+    4.times { |i| arr.push(color_options.sample) }
     return arr
   end
   
