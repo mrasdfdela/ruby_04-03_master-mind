@@ -1,5 +1,5 @@
 module BoardPrint
-  def print(code=nil)
+  def print_board(code=nil)
     print_secret_code(code) # for testing purpose; uses an optional parameter 'code'
 
     board.each_with_index do |row, idx|

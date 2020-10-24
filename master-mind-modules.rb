@@ -40,8 +40,8 @@ module ValidateEntry
 
     until valid_size == true
       puts invalid_msg + msg
-      num = arr.max # pre-selected for testing purposes
-      # num = gets.chomp.to_i
+      # num = arr.max # pre-selected for testing purposes
+      num = gets.chomp.to_i
 
       if num.is_a?(Numeric) && arr.include?(num)
         valid_size = true

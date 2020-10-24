@@ -21,8 +21,8 @@ class Player
       puts error_msg + msg
 
       # for testing 'maker' option
-        choice = 'maker'
-      # choice = gets.chomp.downcase
+        # choice = 'maker'
+      choice = gets.chomp.downcase
       role_selected = true if choices.include?(choice)
       error_msg = 'Invalid selection. '
     end
@@ -39,7 +39,7 @@ end
 class PlayerAI
   # for when player is the code maker
   include GuessingAlgorithm
-  attr_accessor :role, :board, :color_options, :set, :starter, :initial_guess_idx, :color_count, :color_count_idx
+  attr_reader :role, :board, :color_options, :set, :starter, :color_count, :color_count_idx, :third_phase
   def initialize(player_role, board)
     @role = set_role(player_role)
     @board = board
@@ -47,7 +47,8 @@ class PlayerAI
     if @role == 'breaker'
       @set = full_set(@color_options) # generate set of potential codes
       @color_count_idx = 0 # indexes which initial color to evaluate
-      @color_count = Hash.new # tracks the number of colors that have been ID'd
+      @color_count = {} # tracks the number of colors that have been ID'd
+      @third_phase = false
     end
   end
 
@@ -69,6 +70,13 @@ class PlayerAI
       end
     end
     all
+  end
+
+  def set_print
+    @set.each { |el| 
+      p el.combo 
+    }
+    return
   end
 end
 

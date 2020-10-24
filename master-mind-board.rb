@@ -52,7 +52,7 @@ class Board
   def correct_color_and_pos(guess, code)
     count = 0
     guess.each_with_index do |hole, i|
-      count +=1 if hole == code[i]
+      count += 1 if hole == code[i]
     end
     count
   end

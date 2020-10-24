@@ -19,7 +19,7 @@ class Mastermind
     game_over = false
 
     until game_over == true || @board.guess_count > 12
-      @board.print(@board.code.secret) # this is an optional parameter; remove when done
+      @board.print_board(@board.code.secret) # this is an optional parameter; remove when done
 
       if @player.role == 'breaker'
         guess = @player.get_valid_guess(@board.color_options)
@@ -27,11 +27,13 @@ class Mastermind
         guess = @player_AI.guess
       end
 
+      print "\nThe guess is: #{guess}\n"
       @board.update_row(guess)
-      game_over = @board.eval_guess(guess)
+
       @board.guess_count += 1
+      game_over = @board.eval_guess(guess)
     end
-    return
+    @board.print_board(@board.code.secret)
   end
 end
 

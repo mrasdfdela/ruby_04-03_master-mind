@@ -27,8 +27,8 @@ class Code
   
   def generate_code_user
     msg = 'Create a comma-separated code using these options: '
-    # code = get_valid_colors(msg, @color_options)
-    code = ['White', 'Black', 'Red', 'Green'] # for testing purposes
+    code = get_valid_colors(msg, @color_options)
+    # code = ['White', 'Black', 'Red', 'Green'] # for testing purposes
     return code
   end
 end

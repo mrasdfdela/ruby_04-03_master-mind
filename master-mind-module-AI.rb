@@ -5,23 +5,22 @@ module GuessingAlgorithm
       c = @color_options[@color_count_idx]
       output = [c,c,c,c]
       color_count_update(c)
-      remove_from_set_color(c)
+      remove_from_set_color
       @color_count_idx += 1
-    else
-      puts "...sampling phase..."
+    elsif @third_phase == false
+      @third_phase = true
       output = @set.sample.combo
-      byebug
+    else
+      remove_matches
+      output = @set.sample.combo
     end
     remove_from_set_guess(output)
-    
     output
   end
 
   def color_count_total
     count = 0
-    @color_count.each do |k, v|
-      count += v
-    end
+    @color_count.each { |k, v| count += v }
     count
   end
 
@@ -33,22 +32,42 @@ module GuessingAlgorithm
     end
   end
 
-  def guess_color(c)
-    guess = [c, c, c, c]
-  end
-
-  ### Need a method to count the correct colors in the previous turn
-
   def remove_from_set_guess(output)
     @set.each_with_index do |el, idx|
       @set.slice!(idx) if el.combo == output
     end
   end
 
-  def remove_from_set_color(color)
-    @set.each_with_index do |el, idx|
-      @set.slice!(idx) if el.count[color] != @color_count[color]
+  def remove_from_set_color
+    # removes the current guess from the set of possible guesses
+    @color_count.each do |key,value|
+      @set.delete_if do |el|
+        el.count[key] != value
+      end
     end
   end
 
+  def remove_matches
+    # removes previous turn's matches
+    @board.board.each_with_index do |row, idx|
+      if row.correct_positions.nil?
+        match_lookup(@board.board[idx - 1])
+        break
+      end
+    end
+  end
+
+  def match_lookup(row)
+    # removes elements in the set of possibile guesses based on hints
+    correct_positions = row.correct_positions
+    @set.delete_if do |el|
+      matched_positions = 0
+
+      el.combo.each_with_index do |color,idx|
+        matched_positions += 1 if color == row.holes[idx]
+      end
+
+      correct_positions != matched_positions
+    end
+  end
 end
