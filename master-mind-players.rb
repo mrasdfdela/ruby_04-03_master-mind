@@ -39,11 +39,17 @@ end
 class PlayerAI
   # for when player is the code maker
   include GuessingAlgorithm
-  attr_reader :role, :board, :color_options, :set, :starter, :color_count, :color_count_idx, :third_phase
+  attr_reader :role, :board, :color_options, :set, :starter, :seeding_phase #:color_count, :color_count_idx, :third_phase
   def initialize(player_role, board)
     @role = set_role(player_role)
     @board = board
     @color_options = @board.color_options
+    @starter = [
+      @color_options[0],
+      @color_options[0],
+      @color_options[1],
+      @color_options[1]]
+    @seeding_phase = true
     if @role == 'breaker'
       @set = full_set(@color_options) # generate set of potential codes
       @color_count_idx = 0 # indexes which initial color to evaluate

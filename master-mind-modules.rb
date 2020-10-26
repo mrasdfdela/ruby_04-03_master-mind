@@ -56,7 +56,6 @@ module CountColors
   def count_colors(arr)
     count = Hash.new
     arr.each do |el|
-      el = el[0]
       count[el] ? count[el] += 1 : count[el] = 1
     end
     count

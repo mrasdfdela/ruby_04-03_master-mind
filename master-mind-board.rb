@@ -72,13 +72,17 @@ class Board
     count
   end
 
-  def eval_guess(guess)
+  def eval_guess(guess, player_role)
     game_over = false
     if @code.secret == guess
-      puts "Correct! You have won!"
+      if player_role == 'breaker'
+        puts 'Correct! You have won!'
+      else 
+        puts 'The computer has broken your secret code!'
+      end
       game_over = true
     elsif @guess_count == @board_size
-      puts "You have run out of guesses!"
+      puts 'You have run out of guesses!'
       game_over = true
     end
     game_over

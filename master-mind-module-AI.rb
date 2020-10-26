@@ -1,73 +1,63 @@
 module GuessingAlgorithm
-  # for handling AI logic in guessing user-selected code
+  # for handling AI logic for guessing user-created code
   def guess
-    if color_count_total < 4
-      c = @color_options[@color_count_idx]
-      output = [c,c,c,c]
-      color_count_update(c)
-      remove_from_set_color
-      @color_count_idx += 1
-    elsif @third_phase == false
-      @third_phase = true
-      output = @set.sample.combo
+    if @seeding_phase == true
+      @seeding_phase = false
+      output = @starter
     else
-      remove_matches
+      eval_previous_turn
       output = @set.sample.combo
     end
-    remove_from_set_guess(output)
+
+    @set.delete_if { |row| row.combo == output }
     output
   end
 
-  def color_count_total
-    count = 0
-    @color_count.each { |k, v| count += v }
-    count
+  def eval_previous_turn
+    idx = last_guess_idx
+    eval_previous_turn_colors(idx)
+    eval_previous_turn_positions(idx)
   end
 
-  def color_count_update(eval_color)
-    @board.code.secret.each do |color|
-      if color == eval_color
-        @color_count[color] ? @color_count[color] += 1 : @color_count[color] = 1
-      end
-    end
-  end
-
-  def remove_from_set_guess(output)
-    @set.each_with_index do |el, idx|
-      @set.slice!(idx) if el.combo == output
-    end
-  end
-
-  def remove_from_set_color
-    # removes the current guess from the set of possible guesses
-    @color_count.each do |key,value|
-      @set.delete_if do |el|
-        el.count[key] != value
-      end
-    end
-  end
-
-  def remove_matches
-    # removes previous turn's matches
-    @board.board.each_with_index do |row, idx|
+  def last_guess_idx
+    @board.board.each.with_index do |row, idx|
       if row.correct_positions.nil?
-        match_lookup(@board.board[idx - 1])
+        return (idx - 1)
         break
       end
     end
   end
 
-  def match_lookup(row)
-    # removes elements in the set of possibile guesses based on hints
-    correct_positions = row.correct_positions
-    @set.delete_if do |el|
-      matched_positions = 0
+  def eval_previous_turn_colors(idx)
+    guessed_row = @board.board[idx]
+    color_count = guessed_row.correct_positions + guessed_row.correct_colors
 
-      el.combo.each_with_index do |color,idx|
-        matched_positions += 1 if color == row.holes[idx]
+    @set.delete_if do |row|
+      matched_colors = 0
+
+      row.count.each do |k, num|
+        if num.nil? || guessed_row.count[k].nil?
+
+        elsif num == guessed_row.count[k]
+          matched_colors += num
+        else
+          matched_colors += [num, guessed_row.count[k]].min
+        end
       end
 
-      correct_positions != matched_positions
+      color_count != matched_colors
+    end
+  end
+
+  def eval_previous_turn_positions(idx)
+    guessed_row = @board.board[idx]
+
+    @set.delete_if do |row|
+      matched_positions = 0
+      row.combo.each_with_index do |color,idx|
+        matched_positions += 1 if color == guessed_row.holes[idx]
+      end
+      guessed_row.correct_positions != matched_positions
     end
   end
 end
