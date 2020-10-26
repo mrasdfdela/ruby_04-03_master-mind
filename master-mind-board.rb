@@ -3,6 +3,7 @@ require './master-mind-board-print'
 class Board
   include BoardPrint
   include ValidateEntry
+  include CountColors
   # Where the board, secret code, and guesses are kept
   attr_reader :num_colors, :board_size, :color_options
   attr_accessor :board, :guess_results, :guess_count, :code
@@ -44,6 +45,7 @@ class Board
         row.holes = guess
         row.correct_positions = correct_color_and_pos(guess, @code.secret)
         row.correct_colors = correct_color_count(guess, @code.secret) - row.correct_positions
+        row.count = row.count_colors(guess)
         break
       end
     end
@@ -70,15 +72,6 @@ class Board
     count
   end
 
-  def count_colors(arr)
-    count = Hash.new
-    arr.each do |el|
-      el = el[0]
-      count[el] ? count[el] += 1 : count[el] = 1
-    end
-    count
-  end
-
   def eval_guess(guess)
     game_over = false
     if @code.secret == guess
@@ -94,7 +87,8 @@ end
 
 class Row
   # Holes within the board
-  attr_accessor :holes, :correct_positions, :correct_colors
+  include CountColors
+  attr_accessor :holes, :correct_positions, :correct_colors, :count
   def initialize
     @holes = Array.new(4){nil}
     @correct_positions = nil
